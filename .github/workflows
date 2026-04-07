@@ -1,0 +1,33 @@
+name: Yedek Parca Hesaplayici
+on:
+  push:
+    paths:
+      - 'config.json'
+      - 'parcalar.csv'
+  workflow_dispatch: # Manuel çalıştırmak istersen
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Python Kurulumu
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Kütüphaneleri Yukle
+        run: pip install pandas
+
+      - name: Hesaplamayi Calistir
+        run: python calculate.py
+
+      - name: Sonuclari Kaydet
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add guncel_fiyat_listesi.csv
+          git commit -m "Fiyat listesi güncellendi" || exit 0
+          git push
